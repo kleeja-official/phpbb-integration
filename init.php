@@ -28,7 +28,7 @@ $kleeja_plugin['phpbb_integration']['information'] = [
     //settings page, if there is one (what after ? like cp=j_plugins)
     'settings_page' => 'cp=phpbb_settings',
     // min version of kleeja that's required to run this plugin
-    'plugin_kleeja_version_min' => '3.0.2',
+    'plugin_kleeja_version_min' => '3.1.0',
     // max version of kleeja that support this plugin, use 0 for unlimited
     'plugin_kleeja_version_max' => '3.9.9',
     // should this plugin run before others?, 0 is normal, and higher number has high priority
