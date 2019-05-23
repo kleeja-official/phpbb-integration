@@ -1,0 +1,212 @@
+
+<div class="alert alert-info alert-dismissible fixed-top m-3 p-0 text-center small  d-none" id="pageErrors">
+    <span>...</span>
+    <button type="button" class="close py-0" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true" class="small" style="cursor:pointer">&times;</span>
+    </button>
+</div>
+
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+    <li class="breadcrumb-item"><a href="./">{lang.R_CPINDEX}</a></li>
+    <li class="breadcrumb-item"><a href="{action}">{olang.R_PHPBB_SETTINGS}</a></li>
+</ol>
+
+<script>
+function loadWhenjQueryIsReady() {
+    setTimeout(function() {
+        if (typeof jQuery == 'undefined' && typeof window.jQuery == 'undefined') {
+            loadWhenjQueryIsReady();
+        } else {
+            $('#phpbbform').on('keyup change paste', 'input, select:not(#phpbb_intr_enabled), textarea', function(){
+                if($('#phpbb_intr_enabled option:selected').val() == 1) {
+                    $('#phpbb_intr_enabled').val(0);
+                    $('#phpbb_intr_enabled_help').html('{olang.PHPBB_INTR_TEST_NOTE}');
+                    updateSettings(false);
+                    $('#updateBtn').prop('disabled', true);
+                    $('#phpbb_intr_enabled').prop('disabled', true);
+                }
+            });
+        }
+    }, 500);
+}
+loadWhenjQueryIsReady();
+
+var testingInProcess = false;
+
+function testSetting() {
+   if(testingInProcess) {
+        // alert('{lang.WAIT}');
+        return;
+    }
+
+    testingInProcess = true;
+
+	$.ajax({
+		url: '{action}&case=test&{H_FORM_KEYS_GET}&_ajax_=1',
+        dataType: 'json',
+		cache: false})
+		.done(function (data) {
+            testingInProcess = false;
+
+			if(data.content){
+                if(data.content == 'done') {
+                    $('#phpbb_intr_enabled_help').html('<span class="text-success">{olang.PHPBB_INTR_TEST_NOTE_SUCCESS}</span>');
+                    $('#updateBtn').prop('disabled', false);
+                    $('#phpbb_intr_enabled').prop('disabled', false);
+                } else {
+                    $('#phpbb_intr_enabled_help').html('<span class="text-danger">{olang.PHPBB_INTR_TEST_NOTE_ERR}</span>');
+                }
+			} else {
+				this.fail();
+			}
+		})
+		.fail(function(data) {
+            testingInProcess = false;
+            $('#phpbb_intr_enabled_help').html('<span class="text-danger">{lang.ERROR_TRY_AGAIN}</span>');
+        });
+
+        return false;
+}
+
+
+var updatingInProcess = false;
+function updateSettings(showMessages, test) {
+    if(updatingInProcess) {
+        // alert('{lang.WAIT}');
+        return;
+    }
+
+    updatingInProcess = true;
+    $('#phpbbform').css('opacity', '0.4').css('pointer-events', 'none');
+    $('#updateBtn').prop('disabled', true);
+
+	$.ajax({
+        type: 'POST',
+		url: '{action}&case=update&_ajax_=1',
+        dataType: 'json',
+        data: $('#phpbbform').serialize(),
+		cache: false})
+		.done(function (data) {
+             updatingInProcess = false;
+			if(data.content){
+                $('#phpbbform').css('opacity', '1').css('pointer-events', 'auto');
+
+                if(data.content == 'done') {
+                    if(showMessages) {
+                        $('#pageErrors>span').html('{lang.CONFIGS_UPDATED}');
+                        $('#pageErrors').removeClass('d-none alert-danger').addClass('alert-info').fadeOut(4000);
+                    }
+                    if(test) {
+                        testSetting();
+                    }
+                } else {
+                    this.fail();
+                }
+			} else {
+				this.fail();
+			}
+		})
+		.fail(function(data) {
+            updatingInProcess = false;
+            $('#phpbbform').css('opacity', '1').css('pointer-events', 'auto');
+            if(showMessages) {
+                $('#pageErrors>span').html((data.content ? data.content : (data.responseJSON ? data.responseJSON.content  : '{lang.ERROR_TRY_AGAIN}')));
+                $('#pageErrors').removeClass('d-none alert-info').addClass('alert-danger').fadeOut(4000);
+            }
+        });
+
+        return false;
+}
+
+</script>
+
+<div class="d-flex justify-content-end my-3">
+    <button type="button" class="btn btn-outline-secondary mx-1" onclick="updateSettings(false, true)">{olang.PHPBB_INTR_TEST}</button>
+    <button type="button" class="btn btn-primary mx-1" id="updateBtn" disabled onclick="updateSettings(true);">{lang.UPDATE}</button>
+</div>
+
+<form id="phpbbform">
+<div class="card bg-light" id="homepageSetting">
+    <div class="card-header">{lang.CONFIG_KLJ_MENUS_GENERAL}</div>
+    <div class="card-body">
+
+    <!-- phpbb_intr_enabled -->
+    <div class="form-group row">
+        <label for="phpbb_intr_enabled" class="col-sm-2 col-form-label">{olang.PHPBB_INTR_ENABLE}</label>
+        <div class="col-sm-10">
+            <select id="phpbb_intr_enabled" name="phpbb_intr_enabled" class="form-control" (config.phpbb_intr_enabled==0?disabled:)>
+                <option value="0" (config.phpbb_intr_enabled==0?selected:)>{lang.NO}</option>
+                <option value="1" (config.phpbb_intr_enabled==1?selected:)>{lang.YES}</option>
+            </select>
+            <small id="phpbb_intr_enabled_help" class="form-text text-muted"><IF NAME="config.phpbb_intr_enabled==0">{olang.PHPBB_INTR_TEST_NOTE}</IF></small>
+        </div>
+    </div>
+
+    <!-- phpbb_intr_path -->
+    <div class="form-group row">
+        <label for="phpbb_intr_path" class="col-sm-2 col-form-label">{olang.PHPBB_INTR_PATH}</label>
+        <div class="col-sm-10">
+            <input type="email" class="form-control" name="phpbb_intr_path" id="phpbb_intr_path"
+                value="{config.phpbb_intr_path}">
+            <small id="phpbb_intr_path_help" class="form-text text-muted">
+                {olang.PHPBB_INTR_PATH_EXP}
+            </small>
+        </div>
+    </div>
+
+    <!-- phpbb_intr_path -->
+    <div class="form-group row">
+        <label for="phpbb_intr_link" class="col-sm-2 col-form-label">{olang.PHPBB_INTR_LINK}</label>
+        <div class="col-sm-10">
+            <input type="email" class="form-control" name="phpbb_intr_link" id="phpbb_intr_link"
+                value="{config.phpbb_intr_link}">
+        </div>
+    </div>
+
+    <!-- phpbb_intr_path -->
+    <div class="form-group row">
+        <label for="phpbb_intr_api_key" class="col-sm-2 col-form-label">{olang.PHPBB_INTR_API_KEY}</label>
+        <div class="input-group col-sm-10 mb-4">
+            <input type="email" disabled class="form-control" name="phpbb_intr_api_key" id="phpbb_intr_api_key"
+                value="{config.phpbb_intr_api_key}">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" data-toggle="dropdown"
+                    aria-haspopup="true" aria-expanded="false"><i class="fa fa-gear"></i></button>
+                <div class="dropdown-menu">
+                    <a class="dropdown-item" href="{action}&case=regenerate&{H_FORM_KEYS_GET}"
+                        onclick="return confirm_form('{olang.PHPBB_INTR_REGENERATE_NOTE}');">{olang.PHPBB_INTR_REGENERATE}</a>
+                    <a class="dropdown-item" href="#" data-toggle="modal"
+                        data-target="#kjauthModal">{olang.PHPBB_INTR_KJAUTH_FILE}</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+</div>
+
+
+{H_FORM_KEYS}
+</form>
+
+
+<div class="modal" tabindex="-1" role="dialog" id="kjauthModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">{olang.PHPBB_INTR_KJAUTH_FILE}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>{olang.PHPBB_INTR_KJAUTH_FILE_EXP}</p>
+                <textarea class="form-control" rows="10" disabled>{kjauth_file_content}</textarea>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{lang.CLOSE}</button>
+            </div>
+        </div>
+    </div>
+</div>
