@@ -107,6 +107,11 @@ switch ($current_case)
 
             foreach ($list as $item)
             {
+                if(! ig('force') && $item == 'phpbb_intr_enabled')
+                {
+                     continue;
+                }
+
                 update_config($item, p($item, 'str'));
             }
 

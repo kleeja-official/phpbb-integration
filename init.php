@@ -202,7 +202,27 @@ $kleeja_plugin['phpbb_integration']['functions'] = [
         $auth_status = phpbb_auth_username($args['user_id']);
 
         return compact('return_now', 'auth_status');
-    }
+    },
+    'login_before_submit' => function($args) {
+        $args['forget_pass_link'] = rtrim($args['config']['phpbb_intr_link'], '/') . '/ucp.php?mode=sendpassword';
+        return $args;
+    },
+    'get_pass_resetpass_link' => function($args) {
+        $args['forgetpass_link'] = rtrim($args['config']['phpbb_intr_link'], '/') . '/ucp.php?mode=sendpassword';
+        return $args;
+    },
+    'register_not_default_sys' => function($args) {
+        $args['goto_forum_link'] = rtrim($args['config']['phpbb_intr_link'], '/') . '/ucp.php?mode=register';
+        return $args;
+    },
+    'no_submit_profile' => function($args) {
+        $args['goto_forum_link'] = rtrim($args['config']['phpbb_intr_link'], '/') . '/ucp.php';
+        return $args;
+    },
+    'end_common' => function($args) {
+        $args['config']['user_system'] = 'phpbb';
+        return $args;
+    },
 ];
 
 //includes integration functions

@@ -18,6 +18,11 @@ function loadWhenjQueryIsReady() {
         if (typeof jQuery == 'undefined' && typeof window.jQuery == 'undefined') {
             loadWhenjQueryIsReady();
         } else {
+            $(document.body).on('change',"#phpbb_intr_enabled",function (e) {
+                if($('#phpbb_intr_enabled option:selected').val() == 0) {
+                     $('#updateBtn').prop('disabled', false);
+                }
+            });
             $('#phpbbform').on('keyup change paste', 'input, select:not(#phpbb_intr_enabled), textarea', function(){
                 if($('#phpbb_intr_enabled option:selected').val() == 1) {
                     $('#phpbb_intr_enabled').val(0);
@@ -80,10 +85,11 @@ function updateSettings(showMessages, test) {
     updatingInProcess = true;
     $('#phpbbform').css('opacity', '0.4').css('pointer-events', 'none');
     $('#updateBtn').prop('disabled', true);
+    var forceParam = showMessages ? 'force=1&' : '';
 
 	$.ajax({
         type: 'POST',
-		url: '{action}&case=update&_ajax_=1',
+		url: '{action}&case=update&' + forceParam + '_ajax_=1',
         dataType: 'json',
         data: $('#phpbbform').serialize(),
 		cache: false})
