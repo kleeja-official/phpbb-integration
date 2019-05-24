@@ -65,7 +65,7 @@ if (! function_exists('phpbb_auth_login'))
             . ($hashed ? 'userid' : 'username') . '=' . urlencode($name) . '&pass=' . urlencode(base64_encode($pass));
 
             //if only username, let's add it to the query
-            $api_http_query .= $return_username ? '&return_username=1' : '';
+          //  $api_http_query .= $return_username ? '&return_username=1' : '';
 
 
             //get it
@@ -102,7 +102,7 @@ if (! function_exists('phpbb_auth_login'))
         //
         if ($return_username)
         {
-            return $userinfo['id'];
+            return $userinfo['name'];
         }
 
         //
