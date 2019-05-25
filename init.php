@@ -19,7 +19,7 @@ $kleeja_plugin['phpbb_integration']['information'] = [
     // who wrote this plugin?
     'plugin_developer' => 'kleeja.com',
     // this plugin version
-    'plugin_version' => '1.0.3',
+    'plugin_version' => '1.0.4',
     // explain what is this plugin, why should i use it?
     'plugin_description' => [
         'en' => 'phpBB Membership Integration',
@@ -204,24 +204,39 @@ $kleeja_plugin['phpbb_integration']['functions'] = [
         return compact('return_now', 'auth_status');
     },
     'login_before_submit' => function($args) {
-        $args['forget_pass_link'] = rtrim($args['config']['phpbb_intr_link'], '/') . '/ucp.php?mode=sendpassword';
-        return $args;
+        if ($args['config']['phpbb_intr_enabled'] == 1) 
+        {
+            $args['forget_pass_link'] = rtrim($args['config']['phpbb_intr_link'], '/') . '/ucp.php?mode=sendpassword';
+            return $args;
+        }
     },
     'get_pass_resetpass_link' => function($args) {
-        $args['forgetpass_link'] = rtrim($args['config']['phpbb_intr_link'], '/') . '/ucp.php?mode=sendpassword';
-        return $args;
+        if ($args['config']['phpbb_intr_enabled'] == 1) 
+        {
+            $args['forgetpass_link'] = rtrim($args['config']['phpbb_intr_link'], '/').'/ucp.php?mode=sendpassword';
+            return $args;
+        }
     },
     'register_not_default_sys' => function($args) {
-        $args['goto_forum_link'] = rtrim($args['config']['phpbb_intr_link'], '/') . '/ucp.php?mode=register';
-        return $args;
+        if ($args['config']['phpbb_intr_enabled'] == 1) 
+        {
+            $args['goto_forum_link'] = rtrim($args['config']['phpbb_intr_link'], '/').'/ucp.php?mode=register';
+            return $args;
+        }
     },
     'no_submit_profile' => function($args) {
-        $args['goto_forum_link'] = rtrim($args['config']['phpbb_intr_link'], '/') . '/ucp.php';
-        return $args;
+        if ($args['config']['phpbb_intr_enabled'] == 1) 
+        {
+            $args['goto_forum_link'] = rtrim($args['config']['phpbb_intr_link'], '/').'/ucp.php';
+            return $args;
+        }
     },
     'end_common' => function($args) {
-        $args['config']['user_system'] = 'phpbb';
-        return $args;
+        if ($args['config']['phpbb_intr_enabled'] == 1) 
+        {
+            $args['config']['user_system'] = 'phpbb';
+            return $args;
+        }
     },
 ];
 
