@@ -117,7 +117,8 @@ function updateSettings(showMessages, test) {
             updatingInProcess = false;
             $('#phpbbform').css('opacity', '1').css('pointer-events', 'auto');
             if(showMessages) {
-                $('#pageErrors>span').html((data.content ? data.content : (data.responseJSON ? data.responseJSON.content  : '{lang.ERROR_TRY_AGAIN}')));
+                var tryAgainMsg = '{lang.ERROR_TRY_AGAIN}';
+                <IGNORE>$('#pageErrors>span').html((data.content ? data.content : (data.responseJSON ? data.responseJSON.content  : tryAgainMsg)));</IGNORE>
                 $('#pageErrors').removeClass('d-none alert-info').addClass('alert-danger').fadeOut(4000);
             }
         });
