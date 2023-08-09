@@ -38,7 +38,7 @@ if (! function_exists('phpbb_auth_test'))
 
 if (! function_exists('phpbb_auth_login'))
 {
-    function phpbb_auth_login($name, $pass, $hashed = false, $expire, $loginadm = false, $return_username = false)
+    function phpbb_auth_login($name, $pass, $expire, $hashed = false, $loginadm = false, $return_username = false)
     {
         global $config, $usrcp, $userinfo;
 
@@ -140,6 +140,6 @@ if (! function_exists('phpbb_auth_username'))
 {
     function phpbb_auth_username($user_id)
     {
-        return phpbb_auth_login($user_id, false, false, 0, false, true);
+        return phpbb_auth_login($user_id, false, 0, false, false, true);
     }
 }
