@@ -19,7 +19,7 @@ $kleeja_plugin['phpbb_integration']['information'] = [
     // who wrote this plugin?
     'plugin_developer' => 'kleeja.com',
     // this plugin version
-    'plugin_version' => '1.0.4',
+    'plugin_version' => '1.0.5',
     // explain what is this plugin, why should i use it?
     'plugin_description' => [
         'en' => 'phpBB Membership Integration',
