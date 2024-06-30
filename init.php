@@ -19,7 +19,7 @@ $kleeja_plugin['phpbb_integration']['information'] = [
     // who wrote this plugin?
     'plugin_developer' => 'kleeja.com',
     // this plugin version
-    'plugin_version' => '1.0.4',
+    'plugin_version' => '1.0.5',
     // explain what is this plugin, why should i use it?
     'plugin_description' => [
         'en' => 'phpBB Membership Integration',
@@ -184,7 +184,7 @@ $kleeja_plugin['phpbb_integration']['functions'] = [
 
         $return_now = true;
 
-        $login_status = phpbb_auth_login($args['name'], $args['pass'], $args['hashed'], $args['expire'], $args['loginadm']);
+        $login_status = phpbb_auth_login($args['name'], $args['pass'], $args['expire'], $args['hashed'], $args['loginadm']);
 
         return compact('return_now', 'login_status');
     },
